@@ -13,7 +13,6 @@ namespace cloak\report;
 
 use cloak\Result;
 use cloak\result\File;
-use cloak\result\Line;
 use PhpCollection\SequenceInterface;
 
 
@@ -56,14 +55,14 @@ class LcovReport implements FileSavableReportInterface
      */
     public function __toString()
     {
-        return $this->reportFromResult($this->result);
+        return $this->getReportFromResult($this->result);
     }
 
     /**
      * @param Result $result
      * @return string
      */
-    private function reportFromResult(Result $result)
+    private function getReportFromResult(Result $result)
     {
         $results = [];
         $fileReports = $this->result->getFiles();
@@ -86,7 +85,7 @@ class LcovReport implements FileSavableReportInterface
         $lines = $fileReport->getLines();
 
         $results[] = "SF:" . $fileReport->getPath();
-        $results[] = $this->getLineReportFrom($lines);
+        $results[] = $this->getReportFromLines($lines);
         $results[] = "end_of_record";
 
         $content = implode(PHP_EOL, $results);
@@ -98,7 +97,7 @@ class LcovReport implements FileSavableReportInterface
      * @param SequenceInterface $lines
      * @return string
      */
-    private function getLineReportFrom(SequenceInterface $lines)
+    private function getReportFromLines(SequenceInterface $lines)
     {
         $results = [];
         $lineReports = $lines->all();
