@@ -21,6 +21,19 @@ class LcovReport implements FileSavableReportInterface
 {
 
     /**
+     * @var \cloak\Result
+     */
+    private $result;
+
+    /**
+     * @param Result $result
+     */
+    public function __construct(Result $result)
+    {
+        $this->result = $result;
+    }
+
+    /**
      * Save the report to a file
      *
      * @param string $path report file name
