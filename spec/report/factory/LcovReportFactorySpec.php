@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-use cloak\report\LcovReportFactory;
+use cloak\report\factory\LcovReportFactory;
 use cloak\Result;
 
 describe('LcovReportFactory', function() {

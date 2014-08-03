@@ -9,17 +9,22 @@
  * with this source code in the file LICENSE.
  */
 
-namespace cloak\report;
+namespace cloak\report\factory;
 
 use cloak\Result;
+use cloak\report\factory\ReportFactoryInterface;
 
 /**
  * Class LcovReportFactory
  * @package cloak\report
  */
-class LcovReportFactory
+class LcovReportFactory implements ReportFactoryInterface
 {
 
+    /**
+     * @param Result $result
+     * @return \cloak\report\ReportInterface
+     */
     public function createFromResult(Result $result)
     {
     }
