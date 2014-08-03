@@ -12,6 +12,9 @@
 namespace cloak\report;
 
 use cloak\Result;
+use cloak\result\File;
+use cloak\result\Line;
+
 
 /**
  * Class LcovReport
@@ -49,7 +52,41 @@ class LcovReport implements FileSavableReportInterface
 
     public function __toString()
     {
-        return "";
+        $files = $this->result->getFiles();
+
+        $reports = $files->map(function(File $file) {
+            $output  = "";
+            $output .= "SF:" . $file->getPath() . PHP_EOL;
+
+            $lines = $file->getLines();
+            $lineReports = $lines->map(function(Line $line) {
+
+                $output  = "";
+
+                if ($line->isExecuted()) {
+                    $output .= "DA:" . $line->getLineNumber() . ",1";
+                }
+
+                return $output;
+            });
+
+            $elements = $lineReports->all();
+            foreach ($elements as $key => $element) {
+                if (empty($element)) {
+                    unset($elements[$key]);
+                }
+            }
+
+            $output .= implode(PHP_EOL, $elements) . PHP_EOL;
+
+            $output .= "end_of_record";
+
+            return $output;
+        });
+
+        $content = implode(PHP_EOL, $reports->all()) . PHP_EOL;
+
+        return $content;
     }
 
 }
