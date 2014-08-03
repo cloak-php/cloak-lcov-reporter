@@ -14,6 +14,7 @@ namespace cloak\report;
 use cloak\Result;
 use cloak\result\File;
 use cloak\result\Line;
+use PhpCollection\SequenceInterface;
 
 
 /**
@@ -50,41 +51,66 @@ class LcovReport implements FileSavableReportInterface
         echo $this;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        $files = $this->result->getFiles();
+        return $this->reportFromResult($this->result);
+    }
 
-        $reports = $files->map(function(File $file) {
-            $output  = "";
-            $output .= "SF:" . $file->getPath() . PHP_EOL;
+    /**
+     * @param Result $result
+     * @return string
+     */
+    private function reportFromResult(Result $result)
+    {
+        $results = [];
+        $fileReports = $this->result->getFiles();
 
-            $lines = $file->getLines();
-            $lineReports = $lines->map(function(Line $line) {
+        foreach ($fileReports as $fileReport) {
+            $results[] = $this->getReportFromFile($fileReport);
+        }
 
-                $output  = "";
+        $content = implode(PHP_EOL, $results);
 
-                if ($line->isExecuted()) {
-                    $output .= "DA:" . $line->getLineNumber() . ",1";
-                }
+        return $content . PHP_EOL;
+    }
 
-                return $output;
-            });
+    /**
+     * @param SequenceInterface $files
+     * @return string
+     */
+    private function getReportFromFile(File $fileReport)
+    {
+        $lines = $fileReport->getLines();
 
-            $elements = $lineReports->all();
-            foreach ($elements as $key => $element) {
-                if (empty($element)) {
-                    unset($elements[$key]);
-                }
+        $results[] = "SF:" . $fileReport->getPath();
+        $results[] = $this->getLineReportFrom($lines);
+        $results[] = "end_of_record";
+
+        $content = implode(PHP_EOL, $results);
+
+        return $content;
+    }
+
+    /**
+     * @param SequenceInterface $lines
+     * @return string
+     */
+    private function getLineReportFrom(SequenceInterface $lines)
+    {
+        $results = [];
+        $lineReports = $lines->all();
+
+        foreach ($lineReports as $lineReport) {
+            if ($lineReport->isExecuted() === false) {
+                continue;
             }
+            $results[] = "DA:" . $lineReport->getLineNumber() . ",1";
+        }
 
-            $output .= implode(PHP_EOL, $elements) . PHP_EOL;
-
-            $output .= "end_of_record";
-
-            return $output;
-        });
-
-        $content = implode(PHP_EOL, $reports->all()) . PHP_EOL;
+        $content = implode(PHP_EOL, $results);
 
         return $content;
     }
