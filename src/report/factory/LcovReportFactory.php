@@ -12,11 +12,11 @@
 namespace cloak\report\factory;
 
 use cloak\Result;
-use cloak\report\factory\ReportFactoryInterface;
+use cloak\report\LcovReport;
 
 /**
  * Class LcovReportFactory
- * @package cloak\report
+ * @package cloak\report\factory
  */
 class LcovReportFactory implements ReportFactoryInterface
 {
@@ -27,6 +27,7 @@ class LcovReportFactory implements ReportFactoryInterface
      */
     public function createFromResult(Result $result)
     {
+        return new LcovReport();
     }
 
 }

@@ -19,5 +19,8 @@ describe('LcovReportFactory', function() {
             $this->reportFactory = new LcovReportFactory();
             $this->report = $this->reportFactory->createFromResult($this->result);
         });
+        it('return LcovReport instance', function() {
+            expect($this->report)->toBeAnInstanceOf('cloak\report\LcovReport');
+        });
     });
 });
