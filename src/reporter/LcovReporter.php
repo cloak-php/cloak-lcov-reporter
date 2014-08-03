@@ -11,7 +11,7 @@
 
 namespace cloak\reporter;
 
-use cloak\event\EventInterface;
+use cloak\event\StartEventInterface;
 use cloak\event\StopEventInterface;
 
 /**
@@ -24,9 +24,9 @@ class LcovReporter implements ReporterInterface
     use Reportable;
 
     /**
-     * @param \cloak\event\EventInterface $event
+     * @param \cloak\event\StartEventInterface $event
      */
-    public function onStart(EventInterface $event)
+    public function onStart(StartEventInterface $event)
     {
     }
 

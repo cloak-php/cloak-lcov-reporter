@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * This file is part of cloak.
+ *
+ * (c) Noritaka Horio <holy.shared.design@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+namespace cloak\report;
+
+use cloak\Result;
+use cloak\result\File;
+use cloak\result\Line;
+use PhpCollection\SequenceInterface;
+
+
+/**
+ * Class LcovReport
+ * @package cloak\report
+ */
+class LcovReport implements FileSavableReportInterface
+{
+
+    /**
+     * @var \cloak\Result
+     */
+    private $result;
+
+    /**
+     * @param Result $result
+     */
+    public function __construct(Result $result)
+    {
+        $this->result = $result;
+    }
+
+    /**
+     * Save the report to a file
+     *
+     * @param string $path report file name
+     */
+    public function saveAs($path)
+    {
+    }
+
+    public function output()
+    {
+        echo $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->reportFromResult($this->result);
+    }
+
+    /**
+     * @param Result $result
+     * @return string
+     */
+    private function reportFromResult(Result $result)
+    {
+        $results = [];
+        $fileReports = $this->result->getFiles();
+
+        foreach ($fileReports as $fileReport) {
+            $results[] = $this->getReportFromFile($fileReport);
+        }
+
+        $content = implode(PHP_EOL, $results);
+
+        return $content . PHP_EOL;
+    }
+
+    /**
+     * @param SequenceInterface $files
+     * @return string
+     */
+    private function getReportFromFile(File $fileReport)
+    {
+        $lines = $fileReport->getLines();
+
+        $results[] = "SF:" . $fileReport->getPath();
+        $results[] = $this->getLineReportFrom($lines);
+        $results[] = "end_of_record";
+
+        $content = implode(PHP_EOL, $results);
+
+        return $content;
+    }
+
+    /**
+     * @param SequenceInterface $lines
+     * @return string
+     */
+    private function getLineReportFrom(SequenceInterface $lines)
+    {
+        $results = [];
+        $lineReports = $lines->all();
+
+        foreach ($lineReports as $lineReport) {
+            if ($lineReport->isExecuted() === false) {
+                continue;
+            }
+            $results[] = "DA:" . $lineReport->getLineNumber() . ",1";
+        }
+
+        $content = implode(PHP_EOL, $results);
+
+        return $content;
+    }
+
+}
