@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/holyshared/cloak-lcov-reporter.png?label=ready&title=Ready)](https://waffle.io/holyshared/cloak-lcov-reporter)
 cloak-lcov-reporter
 ===================
 
