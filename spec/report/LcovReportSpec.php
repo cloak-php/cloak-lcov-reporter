@@ -15,23 +15,46 @@ use cloak\Result;
 
 describe('LcovReport', function() {
 
-    describe('#output', function() {
-        before(function() {
-            $this->source1 = realpath(__DIR__ . '/../fixture/Example1.php');
-            $this->source2 = realpath(__DIR__ . '/../fixture/Example2.php');
+    before(function() {
+        $this->source1 = realpath(__DIR__ . '/../fixture/Example1.php');
+        $this->source2 = realpath(__DIR__ . '/../fixture/Example2.php');
 
-            $result = Result::from([
-                $this->source1 => [
-                    10 => Line::EXECUTED,
-                    11 => Line::EXECUTED
-                ],
-                $this->source2 => [
-                    10 => Line::EXECUTED,
-                    15 => Line::UNUSED
-                ]
-            ]);
-            $this->report = new LcovReport($result);
+        $result = Result::from([
+            $this->source1 => [
+                10 => Line::EXECUTED,
+                11 => Line::EXECUTED
+            ],
+            $this->source2 => [
+                10 => Line::EXECUTED,
+                15 => Line::UNUSED
+            ]
+        ]);
+        $this->report = new LcovReport($result);
+    });
+
+    describe('#saveAs', function() {
+        context('when report savable', function() {
+            before(function() {
+                $this->filePath = __DIR__ . '/../tmp/report.lcov';
+                $this->report->saveAs($this->filePath);
+            });
+            it('save lcov report ', function() {
+                expect(file_exists($this->filePath))->toBeTrue();
+            });
         });
+        context('when report not savable', function() {
+            before(function() {
+                $this->filePath = __DIR__ . '/../tmp/not_found/';
+            });
+            it('throw \UnderflowException', function() {
+                expect(function() {
+                    $this->report->saveAs($this->filePath);
+                })->toThrow('\UnderflowException');
+            });
+        });
+    });
+
+    describe('#output', function() {
         it('output lcov report', function() {
             $output  = "";
             $output .= "SF:{$this->source1}\n";
@@ -47,4 +70,5 @@ describe('LcovReport', function() {
             })->toPrint($output);
         });
     });
+
 });
