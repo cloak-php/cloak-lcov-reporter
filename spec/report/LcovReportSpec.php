@@ -33,9 +33,16 @@ describe('LcovReport', function() {
     });
 
     describe('#saveAs', function() {
+        before(function() {
+            $this->directory = __DIR__ . '/../tmp/';
+            mkdir($this->directory);
+        });
+        after(function() {
+            rmdir($this->directory);
+        });
         context('when report savable', function() {
             before(function() {
-                $this->filePath = __DIR__ . '/../tmp/report.lcov';
+                $this->filePath = $this->directory . 'report.lcov';
                 $this->report->saveAs($this->filePath);
             });
             it('save lcov report ', function() {
@@ -46,7 +53,7 @@ describe('LcovReport', function() {
         //FIXME throw DirectoryNotWritableException
         context('when report not savable', function() {
             before(function() {
-                $this->filePath = __DIR__ . '/../tmp/not_found/';
+                $this->filePath = $this->directory . 'not_found/not_found.lcov';
             });
             it('throw \UnderflowException', function() {
                 expect(function() {
