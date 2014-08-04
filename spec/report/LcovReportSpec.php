@@ -42,6 +42,8 @@ describe('LcovReport', function() {
                 expect(file_exists($this->filePath))->toBeTrue();
             });
         });
+        //FIXME throw DirectoryNotFoundException
+        //FIXME throw DirectoryNotWritableException
         context('when report not savable', function() {
             before(function() {
                 $this->filePath = __DIR__ . '/../tmp/not_found/';
