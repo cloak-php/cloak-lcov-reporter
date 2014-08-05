@@ -9,9 +9,9 @@
  * with this source code in the file LICENSE.
  */
 
-use cloak\report\LcovReport;
-use cloak\result\Line;
 use cloak\Result;
+use cloak\result\Line;
+use cloak\report\LcovReport;
 
 describe('LcovReport', function() {
 
@@ -49,16 +49,25 @@ describe('LcovReport', function() {
                 expect(file_exists($this->filePath))->toBeTrue();
             });
         });
-        //FIXME throw DirectoryNotFoundException
-        //FIXME throw DirectoryNotWritableException
         context('when report not savable', function() {
             before(function() {
                 $this->filePath = $this->directory . 'not_found/not_found.lcov';
             });
-            it('throw \UnderflowException', function() {
+            it('throw \cloak\report\DirectoryNotFoundException', function() {
                 expect(function() {
                     $this->report->saveAs($this->filePath);
-                })->toThrow('\UnderflowException');
+                })->toThrow('\cloak\report\DirectoryNotFoundException');
+            });
+        });
+        context('when report not savable', function() {
+            before(function() {
+                $this->filePath = $this->directory . 'report.lcov';
+                chmod($this->directory, 0544);
+            });
+            it('throw \cloak\report\DirectoryNotWritableException', function() {
+                expect(function() {
+                    $this->report->saveAs($this->filePath);
+                })->toThrow('\cloak\report\DirectoryNotWritableException');
             });
         });
     });

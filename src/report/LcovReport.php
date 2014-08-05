@@ -14,7 +14,6 @@ namespace cloak\report;
 use cloak\Result;
 use cloak\result\File;
 use PhpCollection\SequenceInterface;
-use \UnderflowException;
 
 /**
  * Class LcovReport
@@ -40,20 +39,19 @@ class LcovReport implements FileSavableReportInterface
      * Save the report to a file
      *
      * @param string $path report file name
-     *
-     * FIXME throw DirectoryNotFoundException
-     * FIXME throw DirectoryNotWritableException
+     * @throws \cloak\report\DirectoryNotFoundException
+     * @throws \cloak\report\DirectoryNotWritableException
      */
     public function saveAs($path)
     {
         $directory = dirname($path);
 
         if (file_exists($directory) === false) {
-            throw new UnderflowException("Directory not found {$directory}");
+            throw new DirectoryNotFoundException("Directory not found {$directory}");
         }
 
         if (is_writable($directory) === false) {
-            throw new UnderflowException("Directory not writable {$directory}");
+            throw new DirectoryNotWritableException("Directory not writable {$directory}");
         }
 
         $report = (string) $this;
