@@ -33,17 +33,18 @@ describe('LcovReport', function() {
     });
 
     describe('#saveAs', function() {
-        before(function() {
-            $this->directory = __DIR__ . '/../tmp/';
-            mkdir($this->directory);
-        });
-        after(function() {
-            rmdir($this->directory);
-        });
         context('when report savable', function() {
             before(function() {
+                $this->directory = __DIR__ . '/../tmp/';
                 $this->filePath = $this->directory . 'report.lcov';
+
+                mkdir($this->directory);
+
                 $this->report->saveAs($this->filePath);
+            });
+            after(function() {
+                unlink($this->filePath);
+                rmdir($this->directory);
             });
             it('save lcov report ', function() {
                 expect(file_exists($this->filePath))->toBeTrue();
@@ -51,7 +52,12 @@ describe('LcovReport', function() {
         });
         context('when report not savable', function() {
             before(function() {
+                $this->directory = __DIR__ . '/../tmp/';
                 $this->filePath = $this->directory . 'not_found/not_found.lcov';
+                mkdir($this->directory);
+            });
+            after(function() {
+                rmdir($this->directory);
             });
             it('throw \cloak\report\DirectoryNotFoundException', function() {
                 expect(function() {
@@ -59,10 +65,16 @@ describe('LcovReport', function() {
                 })->toThrow('\cloak\report\DirectoryNotFoundException');
             });
         });
-        context('when report not savable', function() {
+        context('when directory writable', function() {
             before(function() {
+                $this->directory = __DIR__ . '/../tmp/';
                 $this->filePath = $this->directory . 'report.lcov';
+
+                mkdir($this->directory);
                 chmod($this->directory, 0544);
+            });
+            after(function() {
+                rmdir($this->directory);
             });
             it('throw \cloak\report\DirectoryNotWritableException', function() {
                 expect(function() {
