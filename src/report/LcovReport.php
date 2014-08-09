@@ -97,7 +97,6 @@ class LcovReport implements FileSavableReportInterface
     {
         $lines = $fileReport->getLines();
 
-        $results[] = [];
         $results[] = "SF:" . $fileReport->getPath();
         $results[] = $this->getReportFromLines($lines);
         $results[] = "end_of_record";
