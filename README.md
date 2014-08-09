@@ -43,17 +43,6 @@ Run the **configure** method to be set up.
 
 	<?php
 
-	namespace Example;
-
-	require_once __DIR__ . "/../vendor/autoload.php";
-	require_once __DIR__ . "/src/functions.php";
-
-	use cloak\Analyzer;
-	use cloak\ConfigurationBuilder;
-	use cloak\Result\File;
-
-	use Example as example;
-
 	$analyzer = Analyzer::factory(function(ConfigurationBuilder $builder) {
 
 		$builder->reporter(new LcovReporter(__DIR__ . '/report.lcov'));
