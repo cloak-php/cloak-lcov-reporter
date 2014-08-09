@@ -11,18 +11,36 @@
 
 use cloak\Result;
 use cloak\result\Line;
+use cloak\report\LcovReport;
 use cloak\reporter\LcovReporter;
 use \Mockery;
+use \DateTime;
 
 describe('LcovReporter', function() {
 
+    describe('onStart', function() {
+        before(function() {
+            $this->reporter = new LcovReporter();
+
+            $this->dateTime = DateTime::createFromFormat('Y-m-d H:i:s', '2014-07-01 12:00:00');
+
+            $this->startEvent = Mockery::mock('cloak\event\StartEventInterface');
+            $this->startEvent->shouldReceive('getSendAt')->andReturn( $this->dateTime );
+        });
+        it('output start datetime', function() {
+            $output = "Start at: 1 July 2014 at 12:00\n";
+
+            expect(function() {
+                $this->reporter->onStart($this->startEvent);
+            })->toPrint($output);
+        });
+        it('check mock object expectations', function() {
+            Mockery::close();
+        });
+    });
+
     describe('onStop', function() {
         before(function() {
-            mkdir(__DIR__ . '/../tmp');
-
-            $this->reportFile = __DIR__ . '/../tmp/report.lcov';
-            $this->reporter = new LcovReporter($this->reportFile);
-
             $this->source1 = realpath(__DIR__ . '/../fixture/Example1.php');
             $this->source2 = realpath(__DIR__ . '/../fixture/Example2.php');
 
@@ -36,21 +54,47 @@ describe('LcovReporter', function() {
                     15 => Line::UNUSED
                 ]
             ]);
+        });
+        context('when the path of the file is specified', function() {
+            before(function() {
+                mkdir(__DIR__ . '/../tmp');
 
-            $this->stopEvent = Mockery::mock('\cloak\event\StopEventInterface');
-            $this->stopEvent->shouldReceive('getResult')->once()->andReturn($this->result);
+                $this->reportFile = __DIR__ . '/../tmp/report.lcov';
+                $this->reporter = new LcovReporter($this->reportFile);
 
-            $this->reporter->onStop($this->stopEvent);
+                $this->stopEvent = Mockery::mock('\cloak\event\StopEventInterface');
+                $this->stopEvent->shouldReceive('getResult')->once()->andReturn($this->result);
+
+                $this->reporter->onStop($this->stopEvent);
+            });
+            after(function() {
+                unlink($this->reportFile);
+                rmdir(__DIR__ . '/../tmp');
+            });
+            it('should save lcov report file', function() {
+                expect(file_exists($this->reportFile))->toBeTrue();
+            });
+            it('check mock object expectations', function() {
+                Mockery::close();
+            });
         });
-        after(function() {
-            unlink($this->reportFile);
-            rmdir(__DIR__ . '/../tmp');
-        });
-        it('should save lcov report file', function() {
-            expect(file_exists($this->reportFile))->toBeTrue();
-        });
-        it('check mock object expectations', function() {
-            Mockery::close();
+        context('when the path of the file is not specified', function() {
+            before(function() {
+                $this->reporter = new LcovReporter();
+
+                $this->stopEvent = Mockery::mock('\cloak\event\StopEventInterface');
+                $this->stopEvent->shouldReceive('getResult')->once()->andReturn($this->result);
+
+                $this->lcovReport = new LcovReport($this->result);
+            });
+            it('should output lcov report', function() {
+                expect(function() {
+                    $this->reporter->onStop($this->stopEvent);
+                })->toPrint((string) $this->lcovReport);
+            });
+            it('check mock object expectations', function() {
+                Mockery::close();
+            });
         });
     });
 

@@ -42,6 +42,8 @@ class LcovReporter implements ReporterInterface
      */
     public function onStart(StartEventInterface $event)
     {
+        $startAt = $event->getSendAt()->format('j F Y \a\t H:i');
+        echo "Start at: ", $startAt, PHP_EOL;
     }
 
     /**
@@ -52,9 +54,13 @@ class LcovReporter implements ReporterInterface
     public function onStop(StopEventInterface $event)
     {
         $result = $event->getResult();
+        $lcovReport = new LcovReport($result);
 
-        $report = new LcovReport($result);
-        $report->saveAs($this->outputFilePath);
+        if (empty($this->outputFilePath)) {
+            $lcovReport->output();
+        } else {
+            $lcovReport->saveAs($this->outputFilePath);
+        }
     }
 
 }
