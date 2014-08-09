@@ -78,7 +78,7 @@ class LcovReport implements FileSavableReportInterface
     private function getReportFromResult(Result $result)
     {
         $results = [];
-        $fileReports = $this->result->getFiles();
+        $fileReports = $result->getFiles();
 
         foreach ($fileReports as $fileReport) {
             $results[] = $this->getReportFromFile($fileReport);
