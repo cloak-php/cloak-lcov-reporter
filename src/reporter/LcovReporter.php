@@ -11,6 +11,7 @@
 
 namespace cloak\reporter;
 
+use cloak\report\LcovReport;
 use cloak\event\StartEventInterface;
 use cloak\event\StopEventInterface;
 
@@ -24,6 +25,19 @@ class LcovReporter implements ReporterInterface
     use Reportable;
 
     /**
+     * @var string
+     */
+    private $outputFilePath;
+
+    /**
+     * @param string|null $outputFile
+     */
+    public function __construct($outputFilePath = null)
+    {
+        $this->outputFilePath = $outputFilePath;
+    }
+
+    /**
      * @param \cloak\event\StartEventInterface $event
      */
     public function onStart(StartEventInterface $event)
@@ -32,9 +46,15 @@ class LcovReporter implements ReporterInterface
 
     /**
      * @param \cloak\event\StopEventInterface $event
+     * @throws \cloak\report\DirectoryNotFoundException
+     * @throws \cloak\report\DirectoryNotWritableException
      */
     public function onStop(StopEventInterface $event)
     {
+        $result = $event->getResult();
+
+        $report = new LcovReport($result);
+        $report->saveAs($this->outputFilePath);
     }
 
 }

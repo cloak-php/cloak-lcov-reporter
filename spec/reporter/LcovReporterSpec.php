@@ -9,60 +9,49 @@
  * with this source code in the file LICENSE.
  */
 
-use cloak\Analyzer;
-use cloak\Configuration;
-use cloak\event\StartEvent;
-use cloak\event\StopEvent;
 use cloak\Result;
 use cloak\result\Line;
 use cloak\reporter\LcovReporter;
-
+use \Mockery;
 
 describe('LcovReporter', function() {
 
     describe('onStop', function() {
-
         before(function() {
-            $this->reporter = new LcovReporter();
-            $this->coverages = [
-                realpath(__DIR__ . '/../../src/driver/XdebugDriver.php') => [
-                    1 => Line::EXECUTED,
-                    2 => Line::EXECUTED,
-                    3 => Line::UNUSED
+            mkdir(__DIR__ . '/../tmp');
+
+            $this->reportFile = __DIR__ . '/../tmp/report.lcov';
+            $this->reporter = new LcovReporter($this->reportFile);
+
+            $this->source1 = realpath(__DIR__ . '/../fixture/Example1.php');
+            $this->source2 = realpath(__DIR__ . '/../fixture/Example2.php');
+
+            $this->result = Result::from([
+                $this->source1 => [
+                    10 => Line::EXECUTED,
+                    11 => Line::EXECUTED
                 ],
-                realpath(__DIR__ . '/../../src/result/Line.php') => [
-                    1 => Line::EXECUTED,
-                    2 => Line::EXECUTED,
-                    3 => Line::EXECUTED,
-                    4 => Line::EXECUTED,
-                    5 => Line::EXECUTED,
-                    6 => Line::EXECUTED,
-                    7 => Line::EXECUTED,
-                    8 => Line::UNUSED,
-                    9 => Line::UNUSED,
-                    10 => Line::UNUSED
-                ],
-                realpath(__DIR__ . '/../../src/result/File.php') => [
-                    1 => Line::EXECUTED,
-                    2 => Line::EXECUTED,
-                    3 => Line::UNUSED,
-                    4 => Line::UNUSED,
-                    5 => Line::UNUSED,
-                    6 => Line::UNUSED,
-                    7 => Line::UNUSED
+                $this->source2 => [
+                    10 => Line::EXECUTED,
+                    15 => Line::UNUSED
                 ]
-            ];
-
-            $this->result = Result::from($this->coverages);
-
-            $this->analyzer = new Analyzer(new Configuration());
-
-            $this->startEvent = new StartEvent($this->analyzer);
-            $this->stopEvent = new StopEvent($this->analyzer, [
-                'result' => $this->result
             ]);
+
+            $this->stopEvent = Mockery::mock('\cloak\event\StopEventInterface');
+            $this->stopEvent->shouldReceive('getResult')->once()->andReturn($this->result);
+
+            $this->reporter->onStop($this->stopEvent);
         });
-        it('should save lcov report file');
+        after(function() {
+            unlink($this->reportFile);
+            rmdir(__DIR__ . '/../tmp');
+        });
+        it('should save lcov report file', function() {
+            expect(file_exists($this->reportFile))->toBeTrue();
+        });
+        it('check mock object expectations', function() {
+            Mockery::close();
+        });
     });
 
 });
