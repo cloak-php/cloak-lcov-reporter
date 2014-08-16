@@ -11,6 +11,8 @@
 
 namespace cloak\reporter;
 
+
+use cloak\Result;
 use cloak\result\File;
 use cloak\result\Line;
 use cloak\event\StartEventInterface;
@@ -72,6 +74,15 @@ class LcovReporter implements ReporterInterface
     public function onStop(StopEventInterface $event)
     {
         $result = $event->getResult();
+
+        $this->writeResult($result);
+    }
+
+    /**
+     * @param Result $result
+     */
+    private function writeResult(Result $result)
+    {
         $files = $result->getFiles();
 
         foreach($files as $file) {
