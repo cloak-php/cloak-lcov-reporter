@@ -11,9 +11,12 @@
 
 namespace cloak\reporter;
 
+use cloak\result\File;
+use cloak\result\Line;
 use cloak\event\StartEventInterface;
 use cloak\event\StopEventInterface;
 use cloak\writer\FileWriter;
+
 
 /**
  * Class LcovReporter
@@ -52,22 +55,62 @@ class LcovReporter implements ReporterInterface
     public function onStop(StopEventInterface $event)
     {
         $result = $event->getResult();
-
         $files = $result->getFiles();
 
         foreach($files as $file) {
-            $this->fileWriter->writeLine('SF:' . $file->getPath());
-
-            $lines = $file->getLineResults();
-            foreach ($lines as $line) {
-                if ($line->isExecuted() === false) {
-                    continue;
-                }
-                $this->fileWriter->writeLine('DA:' . $line->getLineNumber() . ',1');
-            }
-
-            $this->fileWriter->writeLine('end_of_record');
+            $this->writeFileResult($file);
         }
+    }
+
+    protected function writeFileResult(File $file)
+    {
+        $lines = $file->getLineResults();
+        $executedLines = [];
+
+        foreach ($lines as $line) {
+            if ($line->isExecuted() === false) {
+                continue;
+            }
+            $executedLines[] = $line;
+        }
+
+        $this->writeFileHeader($file);
+
+        foreach ($executedLines as $executedLine) {
+            $this->writeLineResult($executedLine);
+        }
+
+        $this->writeFileFooter();
+    }
+
+    private function writeFileHeader(File $file)
+    {
+        $parts = [
+            'SF:',
+            $file->getPath()
+        ];
+
+        $record = implode('', $parts);
+        $this->fileWriter->writeLine($record);
+    }
+
+    private function writeFileFooter()
+    {
+        $this->fileWriter->writeLine('end_of_record');
+    }
+
+    /**
+     * @param \cloak\result\Line $line
+     */
+    private function writeLineResult(Line $line)
+    {
+        $parts = [
+            $line->getLineNumber(),
+            1
+        ];
+
+        $record = 'DA:' . implode(',', $parts);
+        $this->fileWriter->writeLine($record);
     }
 
 }
