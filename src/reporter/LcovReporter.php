@@ -34,6 +34,8 @@ class LcovReporter implements ReporterInterface
 
     /**
      * @param string|null $outputFile
+     * @throws \cloak\writer\DirectoryNotFoundException
+     * @throws \cloak\writer\DirectoryNotWritableException
      */
     public function __construct($outputFilePath)
     {
