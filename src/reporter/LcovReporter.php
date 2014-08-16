@@ -11,9 +11,15 @@
 
 namespace cloak\reporter;
 
-use cloak\report\LcovReport;
+
+use cloak\Result;
+use cloak\result\File;
+use cloak\result\Line;
 use cloak\event\StartEventInterface;
 use cloak\event\StopEventInterface;
+use cloak\writer\FileWriter;
+use cloak\writer\ConsoleWriter;
+
 
 /**
  * Class LcovReporter
@@ -25,16 +31,30 @@ class LcovReporter implements ReporterInterface
     use Reportable;
 
     /**
-     * @var string
+     * @var \cloak\writer\FileWriter
      */
-    private $outputFilePath;
+    private $fileWriter;
+
+    /**
+     * @var \cloak\writer\ConsoleWriter
+     */
+    private $consoleWriter;
+
+    /**
+     * @var float
+     */
+    private $startAt;
+
 
     /**
      * @param string|null $outputFile
+     * @throws \cloak\writer\DirectoryNotFoundException
+     * @throws \cloak\writer\DirectoryNotWritableException
      */
-    public function __construct($outputFilePath = null)
+    public function __construct($outputFilePath)
     {
-        $this->outputFilePath = $outputFilePath;
+        $this->fileWriter = new FileWriter($outputFilePath);
+        $this->consoleWriter = new ConsoleWriter();
     }
 
     /**
@@ -42,25 +62,104 @@ class LcovReporter implements ReporterInterface
      */
     public function onStart(StartEventInterface $event)
     {
-        $startAt = $event->getSendAt()->format('j F Y \a\t H:i');
-        echo "Start at: ", $startAt, PHP_EOL;
+        $startAt = $event->getSendAt();
+        $formatStartTime = $startAt->format('j F Y \a\t H:i');
+        $this->consoleWriter->writeLine("Start at: " . $formatStartTime);
+
+        $this->startAt = microtime(true);
     }
 
     /**
      * @param \cloak\event\StopEventInterface $event
-     * @throws \cloak\report\DirectoryNotFoundException
-     * @throws \cloak\report\DirectoryNotWritableException
      */
     public function onStop(StopEventInterface $event)
     {
-        $result = $event->getResult();
-        $lcovReport = new LcovReport($result);
+        $endAt = microtime(true);
+        $runningTime = round($endAt - $this->startAt, 5);
 
-        if (empty($this->outputFilePath)) {
-            $lcovReport->output();
-        } else {
-            $lcovReport->saveAs($this->outputFilePath);
+        $this->consoleWriter->writeLine("Finished in $runningTime seconds");
+
+        $result = $event->getResult();
+        $this->writeResult($result);
+    }
+
+    /**
+     * @param Result $result
+     */
+    private function writeResult(Result $result)
+    {
+        $files = $result->getFiles();
+
+        foreach($files as $file) {
+            $this->writeFileResult($file);
         }
+    }
+
+    /**
+     * @param File $file
+     */
+    private function writeFileResult(File $file)
+    {
+        $this->writeFileHeader($file);
+
+        $executedLines = $this->getExecutedLinesFromFile($file);
+
+        foreach ($executedLines as $executedLine) {
+            $this->writeLineResult($executedLine);
+        }
+
+        $this->writeFileFooter();
+    }
+
+    /**
+     * @param File $file
+     */
+    private function writeFileHeader(File $file)
+    {
+        $parts = [
+            'SF:',
+            $file->getPath()
+        ];
+
+        $record = implode('', $parts);
+        $this->fileWriter->writeLine($record);
+    }
+
+    private function writeFileFooter()
+    {
+        $this->fileWriter->writeLine('end_of_record');
+    }
+
+    /**
+     * @param \cloak\result\Line $line
+     */
+    private function writeLineResult(Line $line)
+    {
+        $parts = [
+            $line->getLineNumber(),
+            1
+        ];
+
+        $record = 'DA:' . implode(',', $parts);
+        $this->fileWriter->writeLine($record);
+    }
+
+    /**
+     * @param File $file
+     * @return array
+     */
+    private function getExecutedLinesFromFile(File $file)
+    {
+        $results = [];
+        $lines = $file->getLineResults();
+
+        foreach ($lines as $line) {
+            if ($line->isExecuted() === false) {
+                continue;
+            }
+            $results[] = $line;
+        }
+        return $results;
     }
 
 }
