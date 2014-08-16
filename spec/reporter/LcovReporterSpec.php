@@ -58,9 +58,15 @@ describe('LcovReporter', function() {
                 ]
             ]);
 
+            $this->startDateTime = DateTime::createFromFormat('Y-m-d H:i:s', '2014-07-01 12:00:00');
+
+            $this->startEvent = Mockery::mock('cloak\event\StartEventInterface');
+            $this->startEvent->shouldReceive('getSendAt')->andReturn($this->startDateTime);
+
             $this->stopEvent = Mockery::mock('\cloak\event\StopEventInterface');
             $this->stopEvent->shouldReceive('getResult')->once()->andReturn($this->result);
 
+            $this->reporter->onStart($this->startEvent);
             $this->reporter->onStop($this->stopEvent);
 
             $output  = "";
