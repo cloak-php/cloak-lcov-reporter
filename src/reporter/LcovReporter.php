@@ -16,6 +16,7 @@ use cloak\result\Line;
 use cloak\event\StartEventInterface;
 use cloak\event\StopEventInterface;
 use cloak\writer\FileWriter;
+use cloak\writer\ConsoleWriter;
 
 
 /**
@@ -33,6 +34,16 @@ class LcovReporter implements ReporterInterface
     private $fileWriter;
 
     /**
+     * @var \cloak\writer\ConsoleWriter
+     */
+    private $consoleWriter;
+
+    /**
+     * @var \cloak\event\StartEventInterface
+     */
+    private $startEvent;
+
+    /**
      * @param string|null $outputFile
      * @throws \cloak\writer\DirectoryNotFoundException
      * @throws \cloak\writer\DirectoryNotWritableException
@@ -40,6 +51,7 @@ class LcovReporter implements ReporterInterface
     public function __construct($outputFilePath)
     {
         $this->fileWriter = new FileWriter($outputFilePath);
+        $this->consoleWriter = new ConsoleWriter();
     }
 
     /**
@@ -47,8 +59,11 @@ class LcovReporter implements ReporterInterface
      */
     public function onStart(StartEventInterface $event)
     {
-        $startAt = $event->getSendAt()->format('j F Y \a\t H:i');
-        echo "Start at: ", $startAt, PHP_EOL;
+        $this->startEvent = $event;
+
+        $startAt = $this->startEvent->getSendAt();
+        $formatStartTime = $startAt->format('j F Y \a\t H:i');
+        $this->consoleWriter->writeLine("Start at: " . $formatStartTime);
     }
 
     /**
