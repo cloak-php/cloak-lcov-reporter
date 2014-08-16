@@ -62,19 +62,14 @@ class LcovReporter implements ReporterInterface
         }
     }
 
-    protected function writeFileResult(File $file)
+    /**
+     * @param File $file
+     */
+    private function writeFileResult(File $file)
     {
-        $lines = $file->getLineResults();
-        $executedLines = [];
-
-        foreach ($lines as $line) {
-            if ($line->isExecuted() === false) {
-                continue;
-            }
-            $executedLines[] = $line;
-        }
-
         $this->writeFileHeader($file);
+
+        $executedLines = $this->getExecutedLinesFromFile($file);
 
         foreach ($executedLines as $executedLine) {
             $this->writeLineResult($executedLine);
@@ -83,6 +78,9 @@ class LcovReporter implements ReporterInterface
         $this->writeFileFooter();
     }
 
+    /**
+     * @param File $file
+     */
     private function writeFileHeader(File $file)
     {
         $parts = [
@@ -111,6 +109,24 @@ class LcovReporter implements ReporterInterface
 
         $record = 'DA:' . implode(',', $parts);
         $this->fileWriter->writeLine($record);
+    }
+
+    /**
+     * @param File $file
+     * @return array
+     */
+    private function getExecutedLinesFromFile(File $file)
+    {
+        $results = [];
+        $lines = $file->getLineResults();
+
+        foreach ($lines as $line) {
+            if ($line->isExecuted() === false) {
+                continue;
+            }
+            $results[] = $line;
+        }
+        return $results;
     }
 
 }
