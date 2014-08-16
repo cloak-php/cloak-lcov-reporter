@@ -11,9 +11,9 @@
 
 namespace cloak\reporter;
 
-use cloak\report\LcovReport;
 use cloak\event\StartEventInterface;
 use cloak\event\StopEventInterface;
+use cloak\writer\FileWriter;
 
 /**
  * Class LcovReporter
@@ -25,16 +25,16 @@ class LcovReporter implements ReporterInterface
     use Reportable;
 
     /**
-     * @var string
+     * @var \cloak\writer\FileWriter
      */
-    private $outputFilePath;
+    private $fileWriter;
 
     /**
      * @param string|null $outputFile
      */
-    public function __construct($outputFilePath = null)
+    public function __construct($outputFilePath)
     {
-        $this->outputFilePath = $outputFilePath;
+        $this->fileWriter = new FileWriter($outputFilePath);
     }
 
     /**
@@ -48,18 +48,25 @@ class LcovReporter implements ReporterInterface
 
     /**
      * @param \cloak\event\StopEventInterface $event
-     * @throws \cloak\report\DirectoryNotFoundException
-     * @throws \cloak\report\DirectoryNotWritableException
      */
     public function onStop(StopEventInterface $event)
     {
         $result = $event->getResult();
-        $lcovReport = new LcovReport($result);
 
-        if (empty($this->outputFilePath)) {
-            $lcovReport->output();
-        } else {
-            $lcovReport->saveAs($this->outputFilePath);
+        $files = $result->getFiles();
+
+        foreach($files as $file) {
+            $this->fileWriter->writeLine('SF:' . $file->getPath());
+
+            $lines = $file->getLineResults();
+            foreach ($lines as $line) {
+                if ($line->isExecuted() === false) {
+                    continue;
+                }
+                $this->fileWriter->writeLine('DA:' . $line->getLineNumber() . ',1');
+            }
+
+            $this->fileWriter->writeLine('end_of_record');
         }
     }
 
