@@ -20,19 +20,12 @@ describe('LcovReporter', function() {
     describe('onStart', function() {
         before(function() {
             $this->reportFile = __DIR__ . '/../tmp/report.lcov';
-            $this->reporter = new LcovReporter($this->reportFile);
 
-            $this->dateTime = DateTime::createFromFormat('Y-m-d H:i:s', '2014-07-01 12:00:00');
+            $this->reporter = new LcovReporter($this->reportFile);
+            $this->reporter->onStart($this->startEvent);
 
             $this->startEvent = Mockery::mock('cloak\event\StartEventInterface');
-            $this->startEvent->shouldReceive('getSendAt')->andReturn( $this->dateTime );
-        });
-        it('output start datetime', function() {
-            $output = "Start at: 1 July 2014 at 12:00\n";
-
-            expect(function() {
-                $this->reporter->onStart($this->startEvent);
-            })->toPrint($output);
+            $this->startEvent->shouldReceive('getSendAt')->never();
         });
         it('check mock object expectations', function() {
             Mockery::close();
@@ -58,15 +51,9 @@ describe('LcovReporter', function() {
                 ]
             ]);
 
-            $this->startDateTime = DateTime::createFromFormat('Y-m-d H:i:s', '2014-07-01 12:00:00');
-
-            $this->startEvent = Mockery::mock('cloak\event\StartEventInterface');
-            $this->startEvent->shouldReceive('getSendAt')->andReturn($this->startDateTime);
-
             $this->stopEvent = Mockery::mock('\cloak\event\StopEventInterface');
             $this->stopEvent->shouldReceive('getResult')->once()->andReturn($this->result);
 
-            $this->reporter->onStart($this->startEvent);
             $this->reporter->onStop($this->stopEvent);
 
             $output  = "";

@@ -18,7 +18,6 @@ use cloak\result\Line;
 use cloak\event\StartEventInterface;
 use cloak\event\StopEventInterface;
 use cloak\writer\FileWriter;
-use cloak\writer\ConsoleWriter;
 
 
 /**
@@ -33,28 +32,17 @@ class LcovReporter implements ReporterInterface
     /**
      * @var \cloak\writer\FileWriter
      */
-    private $fileWriter;
-
-    /**
-     * @var \cloak\writer\ConsoleWriter
-     */
-    private $consoleWriter;
-
-    /**
-     * @var float
-     */
-    private $startAt;
+    private $reportWriter;
 
 
     /**
-     * @param string|null $outputFile
+     * @param string|null $outputFilePath
      * @throws \cloak\writer\DirectoryNotFoundException
      * @throws \cloak\writer\DirectoryNotWritableException
      */
     public function __construct($outputFilePath)
     {
-        $this->fileWriter = new FileWriter($outputFilePath);
-        $this->consoleWriter = new ConsoleWriter();
+        $this->reportWriter = new FileWriter($outputFilePath);
     }
 
     /**
@@ -62,11 +50,6 @@ class LcovReporter implements ReporterInterface
      */
     public function onStart(StartEventInterface $event)
     {
-        $startAt = $event->getSendAt();
-        $formatStartTime = $startAt->format('j F Y \a\t H:i');
-        $this->consoleWriter->writeLine("Start at: " . $formatStartTime);
-
-        $this->startAt = microtime(true);
     }
 
     /**
@@ -74,11 +57,6 @@ class LcovReporter implements ReporterInterface
      */
     public function onStop(StopEventInterface $event)
     {
-        $endAt = microtime(true);
-        $runningTime = round($endAt - $this->startAt, 5);
-
-        $this->consoleWriter->writeLine("Finished in $runningTime seconds");
-
         $result = $event->getResult();
         $this->writeResult($result);
     }
@@ -122,12 +100,12 @@ class LcovReporter implements ReporterInterface
         ];
 
         $record = implode('', $parts);
-        $this->fileWriter->writeLine($record);
+        $this->reportWriter->writeLine($record);
     }
 
     private function writeFileFooter()
     {
-        $this->fileWriter->writeLine('end_of_record');
+        $this->reportWriter->writeLine('end_of_record');
     }
 
     /**
@@ -141,7 +119,7 @@ class LcovReporter implements ReporterInterface
         ];
 
         $record = 'DA:' . implode(',', $parts);
-        $this->fileWriter->writeLine($record);
+        $this->reportWriter->writeLine($record);
     }
 
     /**
@@ -150,15 +128,12 @@ class LcovReporter implements ReporterInterface
      */
     private function getExecutedLinesFromFile(File $file)
     {
-        $results = [];
-        $lines = $file->getLineResults();
+        $lineResults = $file->getLineResults();
 
-        foreach ($lines as $line) {
-            if ($line->isExecuted() === false) {
-                continue;
-            }
-            $results[] = $line;
-        }
+        $results = $lineResults->selectLines(function(Line $line) {
+            return $line->isExecuted();
+        })->all();
+
         return $results;
     }
 
