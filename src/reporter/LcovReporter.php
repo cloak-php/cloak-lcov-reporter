@@ -40,11 +40,6 @@ class LcovReporter implements ReporterInterface
      */
     private $consoleWriter;
 
-    /**
-     * @var float
-     */
-    private $startAt;
-
 
     /**
      * @param string|null $outputFile
@@ -62,11 +57,6 @@ class LcovReporter implements ReporterInterface
      */
     public function onStart(StartEventInterface $event)
     {
-        $startAt = $event->getSendAt();
-        $formatStartTime = $startAt->format('j F Y \a\t H:i');
-        $this->consoleWriter->writeLine("Start at: " . $formatStartTime);
-
-        $this->startAt = microtime(true);
     }
 
     /**
@@ -74,11 +64,6 @@ class LcovReporter implements ReporterInterface
      */
     public function onStop(StopEventInterface $event)
     {
-        $endAt = microtime(true);
-        $runningTime = round($endAt - $this->startAt, 5);
-
-        $this->consoleWriter->writeLine("Finished in $runningTime seconds");
-
         $result = $event->getResult();
         $this->writeResult($result);
     }
