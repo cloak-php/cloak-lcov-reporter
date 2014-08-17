@@ -35,21 +35,15 @@ class LcovReporter implements ReporterInterface
      */
     private $fileWriter;
 
-    /**
-     * @var \cloak\writer\ConsoleWriter
-     */
-    private $consoleWriter;
-
 
     /**
-     * @param string|null $outputFile
+     * @param string|null $outputFilePath
      * @throws \cloak\writer\DirectoryNotFoundException
      * @throws \cloak\writer\DirectoryNotWritableException
      */
     public function __construct($outputFilePath)
     {
         $this->fileWriter = new FileWriter($outputFilePath);
-        $this->consoleWriter = new ConsoleWriter();
     }
 
     /**
