@@ -128,15 +128,12 @@ class LcovReporter implements ReporterInterface
      */
     private function getExecutedLinesFromFile(File $file)
     {
-        $results = [];
-        $lines = $file->getLineResults();
+        $lineResults = $file->getLineResults();
 
-        foreach ($lines as $line) {
-            if ($line->isExecuted() === false) {
-                continue;
-            }
-            $results[] = $line;
-        }
+        $results = $lineResults->selectLines(function(Line $line) {
+            return $line->isExecuted();
+        })->all();
+
         return $results;
     }
 
