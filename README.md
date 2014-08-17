@@ -2,7 +2,7 @@ cloak-lcov-reporter
 ===================
 
 **cloak-lcov-reporter** is lcov reporter for [cloak](https://github.com/holyshared/cloak).  
-Please refer to the ww for [lcov](http://ltp.sourceforge.net/coverage/lcov.php) or [FILES section](http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php). 
+Please refer to the [FILES section](http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php) for [lcov](http://ltp.sourceforge.net/coverage/lcov.php).
 
 [![Build Status](https://travis-ci.org/holyshared/cloak-lcov-reporter.svg?branch=master)](https://travis-ci.org/holyshared/cloak-lcov-reporter)
 [![Coverage Status](https://coveralls.io/repos/holyshared/cloak-lcov-reporter/badge.png?branch=master)](https://coveralls.io/r/holyshared/cloak-lcov-reporter?branch=master)
@@ -21,7 +21,7 @@ Please add a description to the **composer.json** in the configuration file.
 
 	{
 		"require-dev": {
-	        "cloak/cloak": ">=1.3.2.1"
+	        "cloak/cloak": "1.3.2.1"
 			"cloak/lcov-reporter": "1.1.1"
 		}
 	}
