@@ -18,7 +18,6 @@ use cloak\result\Line;
 use cloak\event\StartEventInterface;
 use cloak\event\StopEventInterface;
 use cloak\writer\FileWriter;
-use cloak\writer\ConsoleWriter;
 
 
 /**
@@ -33,7 +32,7 @@ class LcovReporter implements ReporterInterface
     /**
      * @var \cloak\writer\FileWriter
      */
-    private $fileWriter;
+    private $reportWriter;
 
 
     /**
@@ -43,7 +42,7 @@ class LcovReporter implements ReporterInterface
      */
     public function __construct($outputFilePath)
     {
-        $this->fileWriter = new FileWriter($outputFilePath);
+        $this->reportWriter = new FileWriter($outputFilePath);
     }
 
     /**
@@ -101,12 +100,12 @@ class LcovReporter implements ReporterInterface
         ];
 
         $record = implode('', $parts);
-        $this->fileWriter->writeLine($record);
+        $this->reportWriter->writeLine($record);
     }
 
     private function writeFileFooter()
     {
-        $this->fileWriter->writeLine('end_of_record');
+        $this->reportWriter->writeLine('end_of_record');
     }
 
     /**
@@ -120,7 +119,7 @@ class LcovReporter implements ReporterInterface
         ];
 
         $record = 'DA:' . implode(',', $parts);
-        $this->fileWriter->writeLine($record);
+        $this->reportWriter->writeLine($record);
     }
 
     /**
