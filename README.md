@@ -1,7 +1,7 @@
 cloak-lcov-reporter
 ===================
 
-**cloak-lcov-reporter** is lcov reporter for [cloak](https://github.com/holyshared/cloak).  
+**cloak-lcov-reporter** is lcov reporter for [cloak](https://github.com/cloak-php/cloak).  
 Please refer to the [FILES section](http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php) for [lcov](http://ltp.sourceforge.net/coverage/lcov.php).
 
 [![Build Status](https://travis-ci.org/cloak-php/cloak-lcov-reporter.svg?branch=master)](https://travis-ci.org/cloak-php/cloak-lcov-reporter)
