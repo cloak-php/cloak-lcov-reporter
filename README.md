@@ -8,7 +8,7 @@ Please refer to the [FILES section](http://ltp.sourceforge.net/coverage/lcov/gen
 [![Coverage Status](https://coveralls.io/repos/cloak-php/cloak-lcov-reporter/badge.png?branch=master)](https://coveralls.io/r/cloak-php/cloak-lcov-reporter?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cloak-php/cloak-lcov-reporter/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cloak-php/cloak-lcov-reporter/?branch=master)
 [![Stories in Ready](https://badge.waffle.io/cloak-php/cloak-lcov-reporter.png?label=ready&title=Ready)](https://waffle.io/cloak-php/cloak-lcov-reporter)
-
+[![Dependency Status](https://www.versioneye.com/user/projects/53fd5969f4df151696000009/badge.svg?style=flat)](https://www.versioneye.com/user/projects/53fd5969f4df151696000009)
 
 Installation
 ------------------------------------------------
