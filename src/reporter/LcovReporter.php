@@ -80,10 +80,10 @@ class LcovReporter implements ReporterInterface
     {
         $this->writeFileHeader($file);
 
-        $executedLines = $this->getExecutedLinesFromFile($file);
+        $targetLines = $this->getTargetLinesFromFile($file);
 
-        foreach ($executedLines as $executedLine) {
-            $this->writeLineResult($executedLine);
+        foreach ($targetLines as $targetLine) {
+            $this->writeLineResult($targetLine);
         }
 
         $this->writeFileFooter();
@@ -113,12 +113,14 @@ class LcovReporter implements ReporterInterface
      */
     private function writeLineResult(Line $line)
     {
-        $parts = [
+
+        $executedCount = $line->isExecuted() ? 1 : 0;
+        $recordParts = [
             $line->getLineNumber(),
-            1
+            $executedCount
         ];
 
-        $record = 'DA:' . implode(',', $parts);
+        $record = 'DA:' . implode(',', $recordParts);
         $this->reportWriter->writeLine($record);
     }
 
@@ -126,12 +128,12 @@ class LcovReporter implements ReporterInterface
      * @param File $file
      * @return array
      */
-    private function getExecutedLinesFromFile(File $file)
+    private function getTargetLinesFromFile(File $file)
     {
         $lineResults = $file->getLineResults();
 
         $results = $lineResults->selectLines(function(Line $line) {
-            return $line->isExecuted();
+            return $line->isExecuted() || $line->isUnused();
         })->all();
 
         return $results;
