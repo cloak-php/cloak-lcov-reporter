@@ -1,15 +1,14 @@
 cloak-lcov-reporter
 ===================
 
-**cloak-lcov-reporter** is lcov reporter for [cloak](https://github.com/holyshared/cloak).  
+**cloak-lcov-reporter** is lcov reporter for [cloak](https://github.com/cloak-php/cloak).  
 Please refer to the [FILES section](http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php) for [lcov](http://ltp.sourceforge.net/coverage/lcov.php).
 
-[![Build Status](https://travis-ci.org/holyshared/cloak-lcov-reporter.svg?branch=master)](https://travis-ci.org/holyshared/cloak-lcov-reporter)
-[![Coverage Status](https://coveralls.io/repos/holyshared/cloak-lcov-reporter/badge.png?branch=master)](https://coveralls.io/r/holyshared/cloak-lcov-reporter?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/holyshared/cloak-lcov-reporter/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/holyshared/cloak-lcov-reporter/?branch=master)
-[![Stories in Ready](https://badge.waffle.io/holyshared/cloak-lcov-reporter.png?label=ready&title=Ready)](https://waffle.io/holyshared/cloak-lcov-reporter)
-[![Dependencies Status](https://depending.in/holyshared/cloak-lcov-reporter.png)](http://depending.in/holyshared/cloak-lcov-reporter)
-
+[![Build Status](https://travis-ci.org/cloak-php/cloak-lcov-reporter.svg?branch=master)](https://travis-ci.org/cloak-php/cloak-lcov-reporter)
+[![Coverage Status](https://coveralls.io/repos/cloak-php/cloak-lcov-reporter/badge.png?branch=master)](https://coveralls.io/r/cloak-php/cloak-lcov-reporter?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cloak-php/cloak-lcov-reporter/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cloak-php/cloak-lcov-reporter/?branch=master)
+[![Stories in Ready](https://badge.waffle.io/cloak-php/cloak-lcov-reporter.png?label=ready&title=Ready)](https://waffle.io/cloak-php/cloak-lcov-reporter)
+[![Dependency Status](https://www.versioneye.com/user/projects/53fd5969f4df151696000009/badge.svg?style=flat)](https://www.versioneye.com/user/projects/53fd5969f4df151696000009)
 
 Installation
 ------------------------------------------------
