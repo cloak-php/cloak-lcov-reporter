@@ -1,6 +1,6 @@
 <?php
 
-namespace cloak\reporter;
+namespace cloak\script;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
