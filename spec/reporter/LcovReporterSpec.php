@@ -64,6 +64,7 @@ describe('LcovReporter', function() {
 
             $output .= "SF:" . $this->source2 . PHP_EOL;
             $output .= "DA:10,1" . PHP_EOL;
+            $output .= "DA:15,0" . PHP_EOL;
             $output .= "end_of_record" . PHP_EOL;
 
             $this->output = $output;
