@@ -27,6 +27,10 @@ use cloak\writer\FileWriter;
 class LcovReporter implements ReporterInterface
 {
 
+    const SOURCE_FILE_PREFIX = 'SF:';
+    const COVERAGE_PREFIX = 'DA:';
+    const END_OF_RECORD = 'end_of_record';
+
     use Reportable;
 
     /**
@@ -95,7 +99,7 @@ class LcovReporter implements ReporterInterface
     private function writeFileHeader(File $file)
     {
         $parts = [
-            'SF:',
+            self::SOURCE_FILE_PREFIX,
             $file->getPath()
         ];
 
@@ -105,7 +109,7 @@ class LcovReporter implements ReporterInterface
 
     private function writeFileFooter()
     {
-        $this->reportWriter->writeLine('end_of_record');
+        $this->reportWriter->writeLine(self::END_OF_RECORD);
     }
 
     /**
@@ -120,7 +124,7 @@ class LcovReporter implements ReporterInterface
             $executedCount
         ];
 
-        $record = 'DA:' . implode(',', $recordParts);
+        $record = self::COVERAGE_PREFIX . implode(',', $recordParts);
         $this->reportWriter->writeLine($record);
     }
 
