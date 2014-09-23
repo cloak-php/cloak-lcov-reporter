@@ -1,6 +1,9 @@
 cloak-lcov-reporter
 ===================
 
+It has been merged into **1.3.2.3** of **cloak**.  
+It is not maintenance now.
+
 **cloak-lcov-reporter** is lcov reporter for [cloak](https://github.com/cloak-php/cloak).  
 Please refer to the [FILES section](http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php) for [lcov](http://ltp.sourceforge.net/coverage/lcov.php).
 
