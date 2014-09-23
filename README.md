@@ -20,7 +20,6 @@ Please add a description to the **composer.json** in the configuration file.
 
 	{
 		"require-dev": {
-			"cloak/cloak": "1.3.2.*"
 			"cloak/lcov-reporter": "1.1.4"
 		}
 	}
